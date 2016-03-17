@@ -14,7 +14,7 @@ define([
 			glShaderType = gl.FRAGMENT_SHADER;
 		}
 		else {
-			 throw("*** Error: shader type not set");
+			 throw('*** Error: shader type not set');
 		}
 		if(callback) {
 			loadFile('/shaders/' + shaderType + '/' + fileName + '.c', function(file) {

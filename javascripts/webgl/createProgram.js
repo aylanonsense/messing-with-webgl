@@ -22,7 +22,7 @@ define(function() {
 		var success = gl.getProgramParameter(program, gl.LINK_STATUS);
 		if (!success) {
 				// something went wrong with the link
-				throw ("program filed to link:" + gl.getProgramInfoLog (program));
+				throw ('program filed to link:' + gl.getProgramInfoLog (program));
 		}
 
 		return program;
