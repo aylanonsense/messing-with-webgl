@@ -29,6 +29,7 @@ define([
 
 		//setup a GLSL program
 		program = createProgramFromFiles(gl, '2d', '2d', function(program) {
+			gl.useProgram(program);
 			drawStuff(gl, program, canvas);
 		});
 	};
