@@ -55,11 +55,23 @@ define(function() {
 			var aspect = canvas.clientWidth / canvas.clientHeight;
 			var projectionMatrix = makePerspective(fieldOfViewRadians, aspect, 1, 2000);
 
-			//compute the camera's matrix
-			var cameraMatrix = makeTranslation(0, 0, radius * 1.5);
+
+			//Compute the position of the first F
+			var fPosition = [radius, 0, 0];
+
+			//Use matrix math to compute a position on the circle
+			var cameraMatrix = makeTranslation(0, 50, radius * 1.5);
 			cameraMatrix = matrixMultiply(cameraMatrix, makeYRotation(cameraAngleRadians));
 
-			//make a view matrix from the camera matrix
+			//Get the camera's postion from the matrix we computed
+			cameraPosition = [ cameraMatrix[12], cameraMatrix[13], cameraMatrix[14] ];
+
+			var up = [0, 1, 0];
+
+			//Compute the camera's matrix using look at
+			var cameraMatrix = makeLookAt(cameraPosition, fPosition, up);
+
+			//Make a view matrix from the camera matrix
 			var viewMatrix = makeInverse(cameraMatrix);
 
 			//draw 'F's in a circle
@@ -448,6 +460,45 @@ define(function() {
 			gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 		}
 
+		function makeLookAt(cameraPosition, target, up) {
+			var zAxis = normalize(subtractVectors(cameraPosition, target));
+			var xAxis = cross(up, zAxis);
+			var yAxis = cross(zAxis, xAxis);
+
+			return [
+				xAxis[0], xAxis[1], xAxis[2], 0,
+				yAxis[0], yAxis[1], yAxis[2], 0,
+				zAxis[0], zAxis[1], zAxis[2], 0,
+				cameraPosition[0],
+				cameraPosition[1],
+				cameraPosition[2],
+				1
+			];
+		}
+
+		function subtractVectors(a, b) {
+			return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+		}
+
+		function normalize(v) {
+			var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+			//make sure we don't divide by 0
+			if (length > 0.00001) {
+				return [v[0] / length, v[1] / length, v[2] / length];
+			} else {
+				return [0, 0, 0];
+			}
+		}
+
+		function cross(a, b) {
+			return [
+				a[1] * b[2] - a[2] * b[1],
+				a[2] * b[0] - a[0] * b[2],
+				a[0] * b[1] - a[1] * b[0]
+			];
+		}
+
+
 		//fill the buffer with colors for the 'F
 		function setColors(gl) {
 			gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([
@@ -579,5 +630,10 @@ define(function() {
 				160, 160, 220,
 				160, 160, 220]), gl.STATIC_DRAW);
 		}
+
+		setInterval(function() {
+			cameraAngleRadians += 0.01;
+			drawScene();
+		}, 1000 / 60);
 	};
 });
