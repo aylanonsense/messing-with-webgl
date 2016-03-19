@@ -10,9 +10,10 @@ define(function() {
 		var matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
 		//program vars
-		var translation = [ 100, 200, 0 ];
+		var translation = [ 100, 200, 300 ];
 		var rotation = [ Math.PI / 4, 0, -Math.PI / 4]; //radians
 		var scale = [0.8, 0.8, 0.8];
+		var fudgeFactor = 1;
 
 		//create a buffer
 		var buffer = gl.createBuffer();
@@ -432,6 +433,14 @@ define(function() {
 			];
 		}
 
+		function makeZToWMatrix(fudgeFactor) {
+			return [
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, fudgeFactor,
+				0, 0, 0, 1,
+			];
+		}
 
 		//draw the scene
 		function drawScene() {
@@ -445,6 +454,7 @@ define(function() {
 			var rotationYMatrix = makeYRotation(rotation[1]);
 			var rotationZMatrix = makeZRotation(rotation[2]);
 			var scaleMatrix = makeScale(scale[0], scale[1], scale[2]);
+			var zToWMatrix = makeZToWMatrix(fudgeFactor);
 
 			//multiply the matrices
 			var matrix = matrixMultiply(scaleMatrix, rotationZMatrix);
@@ -452,6 +462,7 @@ define(function() {
 			matrix = matrixMultiply(matrix, rotationXMatrix);
 			matrix = matrixMultiply(matrix, translationMatrix);
 			matrix = matrixMultiply(matrix, projectionMatrix);
+			matrix = matrixMultiply(matrix, zToWMatrix);
 
 			//set the matrix
 			gl.uniformMatrix4fv(matrixLocation, false, matrix);
