@@ -10,10 +10,12 @@ define(function() {
 		var matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
 		//program vars
-		var translation = [ 100, 200, 300 ];
-		var rotation = [ Math.PI / 4, 0, -Math.PI / 4]; //radians
-		var scale = [0.8, 0.8, 0.8];
-		var fudgeFactor = 1;
+		var translation = [ 200, 200, -450 ];
+		var rotation = [ Math.PI / 4, 0, -Math.PI / 4 ]; //radians
+		var scale = [ 0.8, 0.8, 0.8 ];
+		var fieldOfViewInRadians = Math.PI / 2;
+		var near = 1;
+		var far = 2000;
 
 		//create a buffer
 		var buffer = gl.createBuffer();
@@ -433,12 +435,15 @@ define(function() {
 			];
 		}
 
-		function makeZToWMatrix(fudgeFactor) {
+		function makePerspective(fieldOfViewInRadians, aspect, near, far) {
+			var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+			var rangeInv = 1.0 / (near - far);
+
 			return [
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, fudgeFactor,
-				0, 0, 0, 1,
+				f / aspect, 0, 0, 0,
+				0, f, 0, 0,
+				0, 0, (near + far) * rangeInv, -1,
+				0, 0, near * far * rangeInv * 2, 0
 			];
 		}
 
@@ -448,13 +453,13 @@ define(function() {
 			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 			//compute the matrices
-			var projectionMatrix = make2DProjection(canvas.clientWidth, canvas.clientHeight, 400);
+			var aspect = canvas.clientWidth / canvas.clientHeight;
+			var projectionMatrix = makePerspective(fieldOfViewInRadians, aspect, near, far);
 			var translationMatrix = makeTranslation(translation[0], translation[1], translation[2]);
 			var rotationXMatrix = makeXRotation(rotation[0]);
 			var rotationYMatrix = makeYRotation(rotation[1]);
 			var rotationZMatrix = makeZRotation(rotation[2]);
 			var scaleMatrix = makeScale(scale[0], scale[1], scale[2]);
-			var zToWMatrix = makeZToWMatrix(fudgeFactor);
 
 			//multiply the matrices
 			var matrix = matrixMultiply(scaleMatrix, rotationZMatrix);
@@ -462,7 +467,6 @@ define(function() {
 			matrix = matrixMultiply(matrix, rotationXMatrix);
 			matrix = matrixMultiply(matrix, translationMatrix);
 			matrix = matrixMultiply(matrix, projectionMatrix);
-			matrix = matrixMultiply(matrix, zToWMatrix);
 
 			//set the matrix
 			gl.uniformMatrix4fv(matrixLocation, false, matrix);
