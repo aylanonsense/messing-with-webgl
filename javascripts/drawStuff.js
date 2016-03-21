@@ -41,7 +41,17 @@ define(function() {
 		var cameraAngleRadians = degToRad(0);
 		var fieldOfViewRadians = degToRad(60);
 
-		drawScene();
+		var then = 0;
+		requestAnimationFrame(animate);
+		function animate(now) {
+			now /= 1000;
+			var deltaTime = now - then;
+			then = now;
+
+			cameraAngleRadians += 2 * deltaTime;
+			drawScene();
+			requestAnimationFrame(animate);
+		}
 
 		//draw the scene
 		function drawScene() {
@@ -630,10 +640,5 @@ define(function() {
 				160, 160, 220,
 				160, 160, 220]), gl.STATIC_DRAW);
 		}
-
-		setInterval(function() {
-			cameraAngleRadians += 0.01;
-			drawScene();
-		}, 1000 / 60);
 	};
 });
