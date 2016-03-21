@@ -5,7 +5,7 @@ define(function() {
 
 		//look up where the vertex data needs to go
 		var positionLocation = gl.getAttribLocation(program, "a_position");
-		var colorLocation = gl.getAttribLocation(program, "a_color");
+		var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
 
 		//lookup uniforms
 		var matrixLocation = gl.getUniformLocation(program, "u_matrix");
@@ -19,16 +19,33 @@ define(function() {
 		//set geometry
 		setGeometry(gl);
 
-		//create a buffer for colors
+		//create a buffer for texcoords
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		gl.enableVertexAttribArray(colorLocation);
+		gl.enableVertexAttribArray(texcoordLocation);
 
-		//we'll supply RGB as bytes
-		gl.vertexAttribPointer(colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+		//we'll supply texcoords as floats
+		gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-		//set Colors
-		setColors(gl);
+		//set texcoords
+		setTexcoords(gl);
+
+		//create a texture
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+
+		//fill the texture with a 1x1 blue pixel
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+		//asynchronously load an image
+		var image = new Image();
+		image.src = "/img/f-texture.png";
+		image.addEventListener('load', function() {
+			//now that the image has loaded make copy it to the texture
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+			gl.generateMipmap(gl.TEXTURE_2D);
+		});
 
 		function radToDeg(r) {
 			return r * 180 / Math.PI;
@@ -508,137 +525,136 @@ define(function() {
 			];
 		}
 
-
-		//fill the buffer with colors for the 'F
-		function setColors(gl) {
-			gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([
+		//fill the buffer with texture coordinates the F
+		function setTexcoords(gl) {
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
 				//left column front
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
+				0, 0,
+				0, 1,
+				1, 0,
+				0, 1,
+				1, 1,
+				1, 0,
 
 				//top rung front
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
+				0, 0,
+				0, 1,
+				1, 0,
+				0, 1,
+				1, 1,
+				1, 0,
 
 				//middle rung front
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
-				200,  70, 120,
+				0, 0,
+				0, 1,
+				1, 0,
+				0, 1,
+				1, 1,
+				1, 0,
 
 				//left column back
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
+				0, 0,
+				1, 0,
+				0, 1,
+				0, 1,
+				1, 0,
+				1, 1,
 
 				//top rung back
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
+				0, 0,
+				1, 0,
+				0, 1,
+				0, 1,
+				1, 0,
+				1, 1,
 
 				//middle rung back
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
-				80, 70, 200,
+				0, 0,
+				1, 0,
+				0, 1,
+				0, 1,
+				1, 0,
+				1, 1,
 
 				//top
-				70, 200, 210,
-				70, 200, 210,
-				70, 200, 210,
-				70, 200, 210,
-				70, 200, 210,
-				70, 200, 210,
+				0, 0,
+				1, 0,
+				1, 1,
+				0, 0,
+				1, 1,
+				0, 1,
 
 				//top rung right
-				200, 200, 70,
-				200, 200, 70,
-				200, 200, 70,
-				200, 200, 70,
-				200, 200, 70,
-				200, 200, 70,
+				0, 0,
+				1, 0,
+				1, 1,
+				0, 0,
+				1, 1,
+				0, 1,
 
 				//under top rung
-				210, 100, 70,
-				210, 100, 70,
-				210, 100, 70,
-				210, 100, 70,
-				210, 100, 70,
-				210, 100, 70,
+				0, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 1,
+				1, 0,
 
 				//between top rung and middle
-				210, 160, 70,
-				210, 160, 70,
-				210, 160, 70,
-				210, 160, 70,
-				210, 160, 70,
-				210, 160, 70,
+				0, 0,
+				1, 1,
+				0, 1,
+				0, 0,
+				1, 0,
+				1, 1,
 
 				//top of middle rung
-				70, 180, 210,
-				70, 180, 210,
-				70, 180, 210,
-				70, 180, 210,
-				70, 180, 210,
-				70, 180, 210,
+				0, 0,
+				1, 1,
+				0, 1,
+				0, 0,
+				1, 0,
+				1, 1,
 
 				//right of middle rung
-				100, 70, 210,
-				100, 70, 210,
-				100, 70, 210,
-				100, 70, 210,
-				100, 70, 210,
-				100, 70, 210,
+				0, 0,
+				1, 1,
+				0, 1,
+				0, 0,
+				1, 0,
+				1, 1,
 
-				//bottom of middle rung
-				76, 210, 100,
-				76, 210, 100,
-				76, 210, 100,
-				76, 210, 100,
-				76, 210, 100,
-				76, 210, 100,
+				//bottom of middle rung.
+				0, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 1,
+				1, 0,
 
 				//right of bottom
-				140, 210, 80,
-				140, 210, 80,
-				140, 210, 80,
-				140, 210, 80,
-				140, 210, 80,
-				140, 210, 80,
+				0, 0,
+				1, 1,
+				0, 1,
+				0, 0,
+				1, 0,
+				1, 1,
 
 				//bottom
-				90, 130, 110,
-				90, 130, 110,
-				90, 130, 110,
-				90, 130, 110,
-				90, 130, 110,
-				90, 130, 110,
+				0, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 1,
+				1, 0,
 
 				//left side
-				160, 160, 220,
-				160, 160, 220,
-				160, 160, 220,
-				160, 160, 220,
-				160, 160, 220,
-				160, 160, 220]), gl.STATIC_DRAW);
+				0, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 1,
+				1, 0]), gl.STATIC_DRAW);
 		}
 	};
 });

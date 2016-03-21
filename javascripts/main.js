@@ -28,7 +28,7 @@ define([
 		}
 
 		//setup a GLSL program
-		program = createProgramFromFiles(gl, '3d', '2d', function(program) {
+		program = createProgramFromFiles(gl, '3d-texture', '3d-texture', function(program) {
 			gl.useProgram(program);
 			drawStuff(gl, program, canvas);
 		});
