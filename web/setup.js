@@ -1,6 +1,9 @@
 //configure requirejs
 requirejs.config({
-	baseUrl: 'javascripts'
+	baseUrl: 'javascripts',
+	paths: {
+		'gl-matrix': '/lib/gl-matrix'
+	}
 });
 
 //execute the main class
