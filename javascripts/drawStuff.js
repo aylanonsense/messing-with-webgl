@@ -45,6 +45,8 @@ define(function() {
 			gl.bindTexture(gl.TEXTURE_2D, texture);
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 			gl.generateMipmap(gl.TEXTURE_2D);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 		});
 
 		function radToDeg(r) {
@@ -529,28 +531,28 @@ define(function() {
 		function setTexcoords(gl) {
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
 				//left column front
-				0, 0,
-				0, 1,
-				1, 0,
-				0, 1,
-				1, 1,
-				1, 0,
+				0.22, 0.19,
+				0.22, 0.79,
+				0.34, 0.19,
+				0.22, 0.79,
+				0.34, 0.79,
+				0.34, 0.19,
 
 				//top rung front
-				0, 0,
-				0, 1,
-				1, 0,
-				0, 1,
-				1, 1,
-				1, 0,
+				0.34, 0.19,
+				0.34, 0.31,
+				0.62, 0.19,
+				0.34, 0.31,
+				0.62, 0.31,
+				0.62, 0.19,
 
 				//middle rung front
-				0, 0,
-				0, 1,
-				1, 0,
-				0, 1,
-				1, 1,
-				1, 0,
+				0.34, 0.43,
+				0.34, 0.55,
+				0.49, 0.43,
+				0.34, 0.55,
+				0.49, 0.55,
+				0.49, 0.43,
 
 				//left column back
 				0, 0,
