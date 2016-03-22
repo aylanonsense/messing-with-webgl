@@ -1,16 +1,19 @@
 define([
 	'display/canvas',
 	'gl-matrix',
+	'entities/Cube',
 	'input/mouse',
 	'input/keyboard'
 ], function(
 	canvas,
 	glMatrix,
+	Cube,
 	mouse,
 	keyboard
 ) {
 	function Game(gl, program) {
 		var buffer;
+		var cube = new Cube();
 
 		//configure WebGL
 		gl.useProgram(program);
@@ -22,140 +25,12 @@ define([
 		var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
 		this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
-		//create a buffer
+		//create a buffer for vertices
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.enableVertexAttribArray(positionLocation);
 		gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-		var positions = new Float32Array([
-			//left column front
-			200, 0, 0,
-			200, 150, 0,
-			230, 0, 0,
-			200, 150, 0,
-			230, 150, 0,
-			230, 0, 0,
-
-			//top rung front
-			230, 0, 0,
-			230, 30, 0,
-			300, 0, 0,
-			230, 30, 0,
-			300, 30, 0,
-			300, 0, 0,
-
-			//middle rung front
-			230, 60, 0,
-			230, 90, 0,
-			267, 60, 0,
-			230, 90, 0,
-			267, 90, 0,
-			267, 60, 0,
-
-			//left column back
-			200, 0, 30,
-			230, 0, 30,
-			200, 150, 30,
-			200, 150, 30,
-			230, 0, 30,
-			230, 150, 30,
-
-			//top rung back
-			230, 0, 30,
-			300, 0, 30,
-			230, 30, 30,
-			230, 30, 30,
-			300, 0, 30,
-			300, 30, 30,
-
-			//middle rung back
-			230, 60, 30,
-			267, 60, 30,
-			230, 90, 30,
-			230, 90, 30,
-			267, 60, 30,
-			267, 90, 30,
-
-			//top
-			200, 0, 0,
-			300, 0, 0,
-			300, 0, 30,
-			200, 0, 0,
-			300, 0, 30,
-			200, 0, 30,
-
-			//top rung right
-			300, 0, 0,
-			300, 30, 0,
-			300, 30, 30,
-			300, 0, 0,
-			300, 30, 30,
-			300, 0, 30,
-
-			//under top rung
-			230, 30, 0,
-			230, 30, 30,
-			300, 30, 30,
-			230, 30, 0,
-			300, 30, 30,
-			300, 30, 0,
-
-			//between top rung and middle
-			230, 30, 0,
-			230, 60, 30,
-			230, 30, 30,
-			230, 30, 0,
-			230, 60, 0,
-			230, 60, 30,
-
-			//top of middle rung
-			230, 60, 0,
-			267, 60, 30,
-			230, 60, 30,
-			230, 60, 0,
-			267, 60, 0,
-			267, 60, 30,
-
-			//right of middle rung
-			267, 60, 0,
-			267, 90, 30,
-			267, 60, 30,
-			267, 60, 0,
-			267, 90, 0,
-			267, 90, 30,
-
-			//bottom of middle rung
-			230, 90, 0,
-			230, 90, 30,
-			267, 90, 30,
-			230, 90, 0,
-			267, 90, 30,
-			267, 90, 0,
-
-			//right of bottom
-			230, 90, 0,
-			230, 150, 30,
-			230, 90, 30,
-			230, 90, 0,
-			230, 150, 0,
-			230, 150, 30,
-
-			//bottom
-			200, 150, 0,
-			200, 150, 30,
-			230, 150, 30,
-			200, 150, 0,
-			230, 150, 30,
-			230, 150, 0,
-
-			//left side
-			200, 0, 0,
-			200, 0, 30,
-			200, 150, 30,
-			200, 0, 0,
-			200, 150, 30,
-			200, 150, 0
-		]);
+		var positions = new Float32Array(cube.vertices);
 		var matrix = glMatrix.mat4.translate([], glMatrix.mat4.identity([]), [ -50, -175, -15 ]);
 		for(var i = 0; i < positions.length; i += 3) {
 			var vector = [ positions[i + 0], positions[i + 1], positions[i + 2] ];
@@ -171,134 +46,7 @@ define([
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.enableVertexAttribArray(texcoordLocation);
 		gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-			//left column front
-			0.22, 0.19,
-			0.22, 0.79,
-			0.34, 0.19,
-			0.22, 0.79,
-			0.34, 0.79,
-			0.34, 0.19,
-
-			//top rung front
-			0.34, 0.19,
-			0.34, 0.31,
-			0.62, 0.19,
-			0.34, 0.31,
-			0.62, 0.31,
-			0.62, 0.19,
-
-			//middle rung front
-			0.34, 0.43,
-			0.34, 0.55,
-			0.49, 0.43,
-			0.34, 0.55,
-			0.49, 0.55,
-			0.49, 0.43,
-
-			//left column back
-			0, 0,
-			1, 0,
-			0, 1,
-			0, 1,
-			1, 0,
-			1, 1,
-
-			//top rung back
-			0, 0,
-			1, 0,
-			0, 1,
-			0, 1,
-			1, 0,
-			1, 1,
-
-			//middle rung back
-			0, 0,
-			1, 0,
-			0, 1,
-			0, 1,
-			1, 0,
-			1, 1,
-
-			//top
-			0, 0,
-			1, 0,
-			1, 1,
-			0, 0,
-			1, 1,
-			0, 1,
-
-			//top rung right
-			0, 0,
-			1, 0,
-			1, 1,
-			0, 0,
-			1, 1,
-			0, 1,
-
-			//under top rung
-			0, 0,
-			0, 1,
-			1, 1,
-			0, 0,
-			1, 1,
-			1, 0,
-
-			//between top rung and middle
-			0, 0,
-			1, 1,
-			0, 1,
-			0, 0,
-			1, 0,
-			1, 1,
-
-			//top of middle rung
-			0, 0,
-			1, 1,
-			0, 1,
-			0, 0,
-			1, 0,
-			1, 1,
-
-			//right of middle rung
-			0, 0,
-			1, 1,
-			0, 1,
-			0, 0,
-			1, 0,
-			1, 1,
-
-			//bottom of middle rung.
-			0, 0,
-			0, 1,
-			1, 1,
-			0, 0,
-			1, 1,
-			1, 0,
-
-			//right of bottom
-			0, 0,
-			1, 1,
-			0, 1,
-			0, 0,
-			1, 0,
-			1, 1,
-
-			//bottom
-			0, 0,
-			0, 1,
-			1, 1,
-			0, 0,
-			1, 1,
-			1, 0,
-
-			//left side
-			0, 0,
-			0, 1,
-			1, 1,
-			0, 0,
-			1, 1,
-			1, 0]), gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube.textureCoordinates), gl.STATIC_DRAW);
 
 		//create a texture
 		var texture = gl.createTexture();
@@ -318,9 +66,9 @@ define([
 		});
 
 		//set up camera
-		this.cameraPosition = [ 0, 0, 300 ];
-		this.cameraHorizontalAngle = Math.PI;
-		this.cameraVerticalAngle = Math.PI / 8;
+		this.cameraPosition = [ 0, 0, 0 ];
+		this.cameraHorizontalAngle = Math.PI / 2;
+		this.cameraVerticalAngle = 0;
 		mouse.onMouseEvent(function(type, x, y, dx, dy) {
 			if(type === 'mousedown') {
 				mouse.toggleLock();

@@ -13,7 +13,6 @@ define([
 
 	//add keyboard handler
 	function onKeyboardEvent(evt) {
-		console.log(evt.which);
 		var isDown = (evt.type === 'keydown');
 		if(global.KEY_BINDINGS[evt.which]) {
 			evt.preventDefault();
