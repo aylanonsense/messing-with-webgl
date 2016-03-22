@@ -6,18 +6,14 @@ define([
 	canvas
 ) {
 	var events = new EventHelper([ 'mouse-event' ]);
-	var mouseX = null;
-	var mouseY = null;
+	var mouseX = 0;
+	var mouseY = 0;
 
 	//add mouse handler
 	function onMouseEvent(evt) {
-		var prevMouseX = mouseX;
-		var prevMouseY = mouseY;
 		mouseX = evt.clientX + document.body.scrollLeft;
 		mouseY = evt.clientY + document.body.scrollTop;
-		events.trigger('mouse-event', evt.type, mouseX, mouseY,
-			evt.movementX,
-			evt.movementY);
+		events.trigger('mouse-event', evt.type, mouseX, mouseY, evt.movementX, evt.movementY);
 	}
 	document.onmousedown = onMouseEvent;
 	document.onmouseup = onMouseEvent;
@@ -25,10 +21,10 @@ define([
 
 	return {
 		onMouseEvent: function(callback, ctx) {
-			events.on.call(events, 'mouse-event', callback, ctx);
+			return events.on.call(events, 'mouse-event', callback, ctx);
 		},
 		getState: function() {
-			return { x: mouseX || 0, y: mouseY || 0 };
+			return { x: mouseX, y: mouseY };
 		},
 		lock: function() {
 			canvas.requestPointerLock();

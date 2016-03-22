@@ -1,14 +1,14 @@
 define([
 	'display/canvas',
 	'gl-matrix',
-	'input/mouse'
+	'input/mouse',
+	'input/keyboard'
 ], function(
 	canvas,
 	glMatrix,
-	mouse
+	mouse,
+	keyboard
 ) {
-	var UP = [ 0, 1, 0 ];
-
 	function Game(gl, program) {
 		var buffer;
 
@@ -318,14 +318,18 @@ define([
 		});
 
 		//set up camera
-		this.cameraPosition = [ 0, 50, 300 ];
-		this.cameraHorizontalAngle = 0;
-		this.cameraVerticalAngle = 0;
+		this.cameraPosition = [ 0, 0, 300 ];
+		this.cameraHorizontalAngle = Math.PI;
+		this.cameraVerticalAngle = Math.PI / 8;
 		mouse.onMouseEvent(function(type, x, y, dx, dy) {
 			if(type === 'mousedown') {
 				mouse.toggleLock();
 			}
-			this.cameraHorizontalAngle += dx / 100;
+			if(mouse.isLocked()) {
+				this.cameraVerticalAngle = Math.min(Math.max(-Math.PI / 2 + 0.05,
+					this.cameraVerticalAngle + dy / 200), Math.PI / 2 - 0.05);
+				this.cameraHorizontalAngle -= dx / 150;
+			}
 		}, this);
 
 		//projection matrix
@@ -333,7 +337,22 @@ define([
 		this.recalculateProjectionMatrix();
 	}
 	Game.prototype.update = function(t) {
-		// this.cameraHorizontalAngle += 2 * t;
+		if(mouse.isLocked()) {
+			var keys = keyboard.getState();
+			var cosAngle = Math.cos(this.cameraHorizontalAngle);
+			var sinAngle = Math.sin(this.cameraHorizontalAngle);
+			if(keys.UP !== keys.DOWN) {
+				this.cameraPosition[0] += sinAngle * 200 * t * (keys.UP ? 1 : -1);
+				this.cameraPosition[2] += cosAngle * 200 * t * (keys.UP ? 1 : -1);
+			}
+			if(keys.LEFT !== keys.RIGHT) {
+				this.cameraPosition[0] += cosAngle * 200 * t * (keys.LEFT ? 1 : -1);
+				this.cameraPosition[2] -= sinAngle * 200 * t * (keys.LEFT ? 1 : -1);
+			}
+			if(keys.JUMP !== keys.CROUCH) {
+				this.cameraPosition[1] += 200 * t * (keys.JUMP ? 1 : -1);
+			}
+		}
 	};
 	Game.prototype.recalculateProjectionMatrix = function() {
 		this.projectionMatrix = glMatrix.mat4.perspective([], 60 * Math.PI / 180,
@@ -344,10 +363,15 @@ define([
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		//calculate the focal point
-		var focalPoint = [ 200, 0, 0 ];
+		var focalPoint = [ 0, 0, 1 ];
+		var cameraRotation = glMatrix.mat4.identity([]);
+		glMatrix.mat4.rotateY(cameraRotation, cameraRotation, this.cameraHorizontalAngle);
+		glMatrix.mat4.rotateX(cameraRotation, cameraRotation, this.cameraVerticalAngle);
+		glMatrix.vec3.transformMat4(focalPoint, focalPoint, cameraRotation);
+		glMatrix.vec3.add(focalPoint, focalPoint, this.cameraPosition);
 
 		//calculate the view matrix
-		var viewMatrix = glMatrix.mat4.lookAt([], this.cameraPosition, focalPoint, UP);
+		var viewMatrix = glMatrix.mat4.lookAt([], this.cameraPosition, focalPoint, [ 0, 1, 0 ]);
 		glMatrix.mat4.multiply(viewMatrix, this.projectionMatrix, viewMatrix);
 
 		//set the view matrix and draw the geometry
