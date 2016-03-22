@@ -1,16 +1,15 @@
 define([
 	'global',
+	'display/canvas',
 	'Game',
 	'webgl/createProgramFromFiles'
 ], function(
 	global,
+	canvas,
 	Game,
 	createProgramFromFiles
 ) {
 	return function main() {
-		//get the canvas
-		var canvas = document.getElementById('canvas');
-
 		//get A WebGL context
 		var gl = canvas.getContext('experimental-webgl');
 		if(!gl) {
@@ -26,7 +25,7 @@ define([
 		//setup a GLSL program
 		program = createProgramFromFiles(gl, '3d-texture', '3d-texture', function(program) {
 			//create a new game
-			var game = new Game(gl, program, canvas);
+			var game = new Game(gl, program);
 
 			//kick off the game loop
 			var then = null;
@@ -48,10 +47,11 @@ define([
 					canvas.width = size * global.CANVAS_WIDTH;
 					canvas.height = size * global.CANVAS_HEIGHT;
 					gl.viewport(0, 0, canvas.width, canvas.height);
+					game.recalculateProjectionMatrix();
 				}
 
 				//render the game
-				game.render(gl, program, canvas);
+				game.render(gl, program);
 
 				//schedule the next loop
 				requestAnimationFrame(loop);
