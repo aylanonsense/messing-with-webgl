@@ -1,0 +1,9 @@
+define({
+	//voxels
+	BLOCK_WIDTH: 16,
+	BLOCK_HEIGHT: 16,
+	BLOCK_DEPTH: 16,
+	CHUNK_WIDTH: 16,
+	CHUNK_HEIGHT: 16,
+	CHUNK_DEPTH: 16,
+});

@@ -1,6 +1,9 @@
 {
   "version": "0.0.0",
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "gl-matrix": "^2.3.2",
+    "noisejs": "git+https://github.com/xixixao/noisejs.git",
+    "requirejs": "^2.2.0"
   }
 }

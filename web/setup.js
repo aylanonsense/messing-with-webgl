@@ -1,8 +1,15 @@
 //configure requirejs
 requirejs.config({
-	baseUrl: 'javascripts',
+	baseUrl: 'javascripts/client',
 	paths: {
-		'gl-matrix': '/lib/gl-matrix'
+		'shared': '../shared',
+		'gl-matrix': '/lib/gl-matrix',
+		'noisejs': '/lib/noisejs'
+	},
+	shim: {
+		'noisejs': {
+			exports: 'Noise'
+		}
 	}
 });
 
