@@ -23,7 +23,7 @@ define([
 		});
 
 		//setup a GLSL program
-		program = createProgramFromFiles(gl, '3d-texture', '3d-texture', function(program) {
+		program = createProgramFromFiles(gl, '3d-texture', '3d-texture-4tap', function(program) {
 			//create a new game
 			var game = new Game(gl, program);
 

@@ -20,7 +20,7 @@ define([
 			for(var i = 0; i < images.length; i++) {
 				gl.texImage2D(gl.TEXTURE_2D, images.length - 1 - i, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[i]);
 			}
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); //LINEAR_MIPMAP_LINEAR = best
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
 			//execute callback, just in case anyone cares that the texture is no longer a blue pixel

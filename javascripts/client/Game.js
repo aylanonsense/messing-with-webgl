@@ -33,10 +33,12 @@ define([
 		gl.enable(gl.DEPTH_TEST);
 
 		//look up shader variables
-		var positionLocation = gl.getAttribLocation(program, "a_position");
-		var normalLocation = gl.getAttribLocation(program, "a_normal");
-		var textureCoordinateLocation = gl.getAttribLocation(program, "a_texcoord");
-		this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
+		var positionLocation = gl.getAttribLocation(program, 'a_position');
+		var normalLocation = gl.getAttribLocation(program, 'a_normal');
+		var textureCoordinateLocation = gl.getAttribLocation(program, 'a_texturecoordinate');
+		var textureSizeLocation = gl.getAttribLocation(program, 'a_texturesize');
+		var textureOffsetLocation = gl.getAttribLocation(program, 'a_textureoffset');
+		this.matrixLocation = gl.getUniformLocation(program, 'u_matrix');
 
 		//create a buffer for vertices
 		this.vertexBuffer = gl.createBuffer();
@@ -52,11 +54,25 @@ define([
 		gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
-		//create a buffer for texcoords
+		//create a buffer for texture coordinates
 		this.textureCoordinateBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
 		gl.enableVertexAttribArray(textureCoordinateLocation);
 		gl.vertexAttribPointer(textureCoordinateLocation, 2, gl.FLOAT, false, 0, 0);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+
+		//create a buffer for texture sizes
+		this.textureSizeBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureSizeBuffer);
+		gl.enableVertexAttribArray(textureSizeLocation);
+		gl.vertexAttribPointer(textureSizeLocation, 2, gl.FLOAT, false, 0, 0);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+
+		//create a buffer for texture offsets
+		this.textureOffsetBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureOffsetBuffer);
+		gl.enableVertexAttribArray(textureOffsetLocation);
+		gl.vertexAttribPointer(textureOffsetLocation, 2, gl.FLOAT, false, 0, 0);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
 		//create a texture
@@ -132,12 +148,17 @@ define([
 		var vertices = [];
 		var normals = [];
 		var textureCoordinates = [];
+		var textureSizes = [];
+		var textureOffsets = [];
 		for(var i = 0; i < this.chunks.length; i++) {
 			vertices = vertices.concat(this.chunks[i].vertices);
 			normals = normals.concat(this.chunks[i].normals);
 			textureCoordinates = textureCoordinates.concat(this.chunks[i].textureCoordinates);
+			textureSizes = textureSizes.concat(this.chunks[i].textureSizes);
+			textureOffsets = textureOffsets.concat(this.chunks[i].textureOffsets);
 		}
-		console.log(vertices.length / 3, normals.length / 3, textureCoordinates.length / 2);
+		console.log((vertices.length / 3) + " " + (normals.length / 3) + " " + (textureCoordinates.length / 2) +
+			" " + (textureSizes.length / 2) + " " + (textureOffsets.length / 2));
 		this.numTriangles = vertices.length / 3;
 
 		//fill the vertex buffer
@@ -151,6 +172,10 @@ define([
 		//fill the text coordinate buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureSizeBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureSizes), gl.STATIC_DRAW);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureOffsetBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureOffsets), gl.STATIC_DRAW);
 	};
 	Game.prototype.update = function(t) {
 		if(mouse.isLocked()) {

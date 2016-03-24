@@ -49,6 +49,8 @@ define([
 		this.vertices = [];
 		this.normals = [];
 		this.textureCoordinates = [];
+		this.textureSizes = [];
+		this.textureOffsets = [];
 		this._createSimpleBlockGeometry();
 	}
 	/*Chunk.prototype._createSimpleChunkGeometry = function() {
@@ -64,7 +66,7 @@ define([
 					var i = x * config.CHUNK_HEIGHT * config.CHUNK_DEPTH + y * config.CHUNK_DEPTH + z;
 					if(blockTypesEnum[this.blockData[i]]) {
 						var blockType = blockTypesEnum[this.blockData[i]];
-						var textureCoordinates = efficientBlockTypes[blockType].textureCoordinates;
+						var texture = efficientBlockTypes[blockType].texture;
 
 						//create vertices for each block
 						this.vertices.push.apply(this.vertices, createCubeGeometry(
@@ -77,12 +79,24 @@ define([
 						this.normals.push.apply(this.normals, BLOCK_NORMALS);
 
 						//create texture coordinates for each block
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.front);
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.back);
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.left);
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.right);
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.top);
-						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.bottom);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.front);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.back);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.left);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.right);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.top);
+						this.textureCoordinates.push.apply(this.textureCoordinates, texture.coordinates.bottom);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.front);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.back);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.left);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.right);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.top);
+						this.textureSizes.push.apply(this.textureSizes, texture.sizes.bottom);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.front);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.back);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.left);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.right);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.top);
+						this.textureOffsets.push.apply(this.textureOffsets, texture.offsets.bottom);
 					}
 				}
 			}
