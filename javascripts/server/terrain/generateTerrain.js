@@ -11,10 +11,19 @@ define([
 		for(var x = 0; x < params.width; x++) {
 			for(var y = 0; y < params.height; y++) {
 				for(var z = 0; z < params.depth; z++) {
-					if(noise.perlin3(x / 10, y / 10, z / 10) > 0.1) {
-						blockData.push(1);
+					var v = noise.perlin3(x / 10, y / 10, z / 10);
+					if(v > 0.1) {
+						if(v > 0.3) {
+							//stone
+							blockData.push(3);
+						}
+						else {
+							//grass
+							blockData.push(2);
+						}
 					}
 					else {
+						//air
 						blockData.push(0);
 					}
 				}

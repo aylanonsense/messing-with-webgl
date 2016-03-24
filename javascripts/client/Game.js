@@ -2,8 +2,10 @@ define([
 	'shared/config',
 	'global',
 	'display/canvas',
+	'display/textureConfig',
+	'display/loadTexture',
 	'gl-matrix',
-	'entities/Chunk',
+	'voxel/Chunk',
 	'input/mouse',
 	'input/keyboard',
 	'terrain/loadTerrain'
@@ -11,6 +13,8 @@ define([
 	config,
 	global,
 	canvas,
+	textureConfig,
+	loadTexture,
 	glMatrix,
 	Chunk,
 	mouse,
@@ -41,28 +45,15 @@ define([
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
 		//create a buffer for texcoords
-		this.textCoordinateBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.textCoordinateBuffer);
+		this.textureCoordinateBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
 		gl.enableVertexAttribArray(texcoordLocation);
 		gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
 		//create a texture
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		//fill the texture with a 1x1 blue pixel
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-		//asynchronously load an image
-		var image = new Image();
-		image.src = "/img/debug-block-texture.png";
-		image.addEventListener('load', function() {
-			//now that the image has loaded copy it to the texture
-			gl.bindTexture(gl.TEXTURE_2D, texture);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-			gl.generateMipmap(gl.TEXTURE_2D);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		});
+		var blockTexture = loadTexture(gl, textureConfig.blocks.fileName);
+		gl.bindTexture(gl.TEXTURE_2D, blockTexture);
 
 		//set up camera
 		this.cameraPosition = [
@@ -110,7 +101,7 @@ define([
 									//figure out if there is even a block in that position
 									var i = (chunkX + x) + terrain.width * (chunkY + y) +
 										terrain.width * terrain.height * (chunkZ + z);
-									blockData.push(terrain.blocks[i] ? 1 : 0);
+									blockData.push(terrain.blocks[i]);
 								}
 								else {
 									blockData.push(0);
@@ -143,7 +134,7 @@ define([
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
 		//create a buffer for texcoords
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.textCoordinateBuffer);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
 	};
 	Game.prototype.update = function(t) {
