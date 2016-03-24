@@ -17,6 +17,7 @@ define([
 		for(var i = 0; i < DIRECTIONS.length; i++) {
 			var frame = blockTypes[type].texture[DIRECTIONS[i]];
 			var textureCoordinates = createTextureCoordinates(frame,
+				textureConfig.blocks.width, textureConfig.blocks.height,
 				textureConfig.blocks.rows, textureConfig.blocks.cols);
 			obj.textureCoordinates[DIRECTIONS[i]] = textureCoordinates;
 		}

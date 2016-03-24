@@ -6,7 +6,7 @@ define([
 	saveTerrain
 ) {
 	return function main() {
-		var terrain = generateTerrain({ seed: 0.63478145, width: 96, height: 32, depth: 96 });
+		var terrain = generateTerrain({ seed: 0.63478145, width: 32, height: 16, depth: 32 });
 		saveTerrain('test-level', terrain);
 	};
 });

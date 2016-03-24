@@ -34,7 +34,8 @@ define([
 
 		//look up shader variables
 		var positionLocation = gl.getAttribLocation(program, "a_position");
-		var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
+		var normalLocation = gl.getAttribLocation(program, "a_normal");
+		var textureCoordinateLocation = gl.getAttribLocation(program, "a_texcoord");
 		this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
 		//create a buffer for vertices
@@ -44,22 +45,29 @@ define([
 		gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
+		//create a buffer for normals
+		this.normalBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+		gl.enableVertexAttribArray(normalLocation);
+		gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+
 		//create a buffer for texcoords
 		this.textureCoordinateBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
-		gl.enableVertexAttribArray(texcoordLocation);
-		gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(textureCoordinateLocation);
+		gl.vertexAttribPointer(textureCoordinateLocation, 2, gl.FLOAT, false, 0, 0);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
 
 		//create a texture
-		var blockTexture = loadTexture(gl, textureConfig.blocks.fileName);
+		var blockTexture = loadTexture(gl, textureConfig.blocks);
 		gl.bindTexture(gl.TEXTURE_2D, blockTexture);
 
 		//set up camera
 		this.cameraPosition = [
-			7 * config.CHUNK_WIDTH * config.BLOCK_WIDTH,
-			2.5 * config.CHUNK_HEIGHT * config.BLOCK_HEIGHT,
-			7 * config.CHUNK_DEPTH * config.BLOCK_DEPTH
+			2.1 * config.CHUNK_WIDTH * config.BLOCK_WIDTH,
+			1.05 * config.CHUNK_HEIGHT * config.BLOCK_HEIGHT,
+			2.1 * config.CHUNK_DEPTH * config.BLOCK_DEPTH
 		];
 		this.cameraHorizontalAngle = Math.PI * -3 / 4;
 		this.cameraVerticalAngle = Math.PI / 8;
@@ -122,18 +130,25 @@ define([
 	Game.prototype.rebuildGeometry = function(gl, program) {
 		//compile vertices and texture coordinates
 		var vertices = [];
+		var normals = [];
 		var textureCoordinates = [];
 		for(var i = 0; i < this.chunks.length; i++) {
 			vertices = vertices.concat(this.chunks[i].vertices);
+			normals = normals.concat(this.chunks[i].normals);
 			textureCoordinates = textureCoordinates.concat(this.chunks[i].textureCoordinates);
 		}
+		console.log(vertices.length / 3, normals.length / 3, textureCoordinates.length / 2);
 		this.numTriangles = vertices.length / 3;
 
-		//create a buffer for vertices
+		//fill the vertex buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-		//create a buffer for texcoords
+		//fill the normal buffer
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+
+		//fill the text coordinate buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordinateBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
 	};

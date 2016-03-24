@@ -9,6 +9,32 @@ define([
 	blockTypesEnum,
 	efficientBlockTypes
 ) {
+	var BLOCK_NORMALS = [
+		//front
+		0, 0, 1,  0, 0, 1,  0, 0, 1,
+		0, 0, 1,  0, 0, 1,  0, 0, 1,
+
+		//back
+		0, 0, -1,  0, 0, -1,  0, 0, -1,
+		0, 0, -1,  0, 0, -1,  0, 0, -1,
+
+		//left
+		1, 0, 0,  1, 0, 0,  1, 0, 0,
+		1, 0, 0,  1, 0, 0,  1, 0, 0,
+
+		//right
+		-1, 0, 0,  -1, 0, 0,  -1, 0, 0,
+		-1, 0, 0,  -1, 0, 0,  -1, 0, 0,
+
+		//top
+		0, 1, 0,  0, 1, 0,  0, 1, 0,
+		0, 1, 0,  0, 1, 0,  0, 1, 0,			
+
+		//bottom
+		0, -1, 0,  0, -1, 0,  0, -1, 0,
+		0, -1, 0 , 0, -1, 0,  0, -1, 0
+	];
+
 	function Chunk(params) {
 		//variables solely to make initialization easier
 		this.blockData = params.blockData;
@@ -21,6 +47,7 @@ define([
 
 		//initialize geometry
 		this.vertices = [];
+		this.normals = [];
 		this.textureCoordinates = [];
 		this._createSimpleBlockGeometry();
 	}
@@ -45,6 +72,9 @@ define([
 							this.y + y * config.BLOCK_HEIGHT,
 							this.z + z * config.BLOCK_DEPTH,
 							config.BLOCK_WIDTH, config.BLOCK_HEIGHT, config.BLOCK_DEPTH));
+
+						//add normal vectors for each triangle
+						this.normals.push.apply(this.normals, BLOCK_NORMALS);
 
 						//create texture coordinates for each block
 						this.textureCoordinates.push.apply(this.textureCoordinates, textureCoordinates.front);

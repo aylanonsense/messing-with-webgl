@@ -3,6 +3,7 @@ define(function() {
 		var xMin = x, xMax = x + width;
 		var yMin = y, yMax = y + height;
 		var zMin = z, zMax = z + depth;
+
 		return [
 			//front
 			xMin, yMin, zMax,  xMax, yMin, zMax,  xMax, yMax, zMax,
