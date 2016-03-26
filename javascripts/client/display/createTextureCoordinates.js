@@ -4,14 +4,12 @@ define([], function() {
 		var col = frame % cols;
 		var tileWidth = 1 / cols;
 		var tileHeight = 1 / rows;
-		var minX = (col + 0.0) / cols;// + 0.5 / width;
+		var minX = col / cols;// + 0.5 / width;
 		var maxX = minX + tileWidth;// - 0.5 / width;
-		var minY = (row + 0.0) / rows;// + 0.5 / height;
+		var minY = row / rows;// + 0.5 / height;
 		var maxY = minY + tileHeight;// - 0.5 / height;
-		minX += 0.05 / width;
-		minY += 0.05 / height;
-		tileWidth -= 2 * 0.05 / width;
-		tileHeight -= 2 * 0.05 / height;
+		minX -= 0.003 / width; //necessary to avoid small texture misalignment ~shrug~
+		minY -= 0.003 / height;
 		return {
 			coordinates: [
 				minX, maxY,  maxX, maxY,  maxX, minY,

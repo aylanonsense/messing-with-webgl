@@ -15,8 +15,9 @@ var app = express();
 app.use(express.static(__dirname + '/web'));
 app.use('/javascripts/client', express.static(__dirname + '/javascripts/client'));
 app.use('/javascripts/shared', express.static(__dirname + '/javascripts/shared'));
-app.use('/data/terrain', express.static(__dirname + '/data/terrain'));
+app.use('/data', express.static(__dirname + '/data'));
 app.use('/shaders', express.static(__dirname + '/shaders'));
+app.use('/img', express.static(__dirname + '/img'));
 app.get('/lib/noisejs.js', function(req, res) {
 	res.sendFile(__dirname + '/node_modules/noisejs/index.js');
 });

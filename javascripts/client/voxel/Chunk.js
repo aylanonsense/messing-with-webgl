@@ -41,9 +41,9 @@ define([
 		this.x = params.x || 0;
 		this.y = params.y || 0;
 		this.z = params.z || 0;
-		this.width = config.CHUNK_WIDTH * config.BLOCK_WIDTH;
-		this.height = config.CHUNK_HEIGHT * config.BLOCK_HEIGHT;
-		this.depth = config.CHUNK_DEPTH * config.BLOCK_DEPTH;
+		this.width = config.CHUNK_WIDTH * config.BLOCK_SIZE;
+		this.height = config.CHUNK_HEIGHT * config.BLOCK_SIZE;
+		this.depth = config.CHUNK_DEPTH * config.BLOCK_SIZE;
 
 		//initialize geometry
 		this.vertices = [];
@@ -70,10 +70,10 @@ define([
 
 						//create vertices for each block
 						this.vertices.push.apply(this.vertices, createCubeGeometry(
-							this.x + x * config.BLOCK_WIDTH,
-							this.y + y * config.BLOCK_HEIGHT,
-							this.z + z * config.BLOCK_DEPTH,
-							config.BLOCK_WIDTH, config.BLOCK_HEIGHT, config.BLOCK_DEPTH));
+							this.x + x * config.BLOCK_SIZE,
+							this.y + y * config.BLOCK_SIZE,
+							this.z + z * config.BLOCK_SIZE,
+							config.BLOCK_SIZE, config.BLOCK_SIZE, config.BLOCK_SIZE));
 
 						//add normal vectors for each triangle
 						this.normals.push.apply(this.normals, BLOCK_NORMALS);

@@ -2,7 +2,7 @@ define([
 	'shared/config',
 	'global',
 	'display/canvas',
-	'display/textureConfig',
+	'shared/display/textureConfig',
 	'display/loadTexture',
 	'gl-matrix',
 	'voxel/Chunk',
@@ -81,9 +81,9 @@ define([
 
 		//set up camera
 		this.cameraPosition = [
-			2.1 * config.CHUNK_WIDTH * config.BLOCK_WIDTH,
-			1.05 * config.CHUNK_HEIGHT * config.BLOCK_HEIGHT,
-			2.1 * config.CHUNK_DEPTH * config.BLOCK_DEPTH
+			2.1 * config.CHUNK_WIDTH * config.BLOCK_SIZE,
+			1.05 * config.CHUNK_HEIGHT * config.BLOCK_SIZE,
+			2.1 * config.CHUNK_DEPTH * config.BLOCK_SIZE
 		];
 		this.cameraHorizontalAngle = Math.PI * -3 / 4;
 		this.cameraVerticalAngle = Math.PI / 8;
@@ -135,9 +135,9 @@ define([
 					}
 					this.chunks.push(new Chunk({
 						blockData: blockData,
-						x: chunkX * config.BLOCK_WIDTH,
-						y: chunkY * config.BLOCK_HEIGHT,
-						z: chunkZ * config.BLOCK_DEPTH
+						x: chunkX * config.BLOCK_SIZE,
+						y: chunkY * config.BLOCK_SIZE,
+						z: chunkZ * config.BLOCK_SIZE
 					}));
 				}
 			}
@@ -157,8 +157,6 @@ define([
 			textureSizes = textureSizes.concat(this.chunks[i].textureSizes);
 			textureOffsets = textureOffsets.concat(this.chunks[i].textureOffsets);
 		}
-		console.log((vertices.length / 3) + " " + (normals.length / 3) + " " + (textureCoordinates.length / 2) +
-			" " + (textureSizes.length / 2) + " " + (textureOffsets.length / 2));
 		this.numTriangles = vertices.length / 3;
 
 		//fill the vertex buffer
@@ -180,7 +178,7 @@ define([
 	Game.prototype.update = function(t) {
 		if(mouse.isLocked()) {
 			var keys = keyboard.getState();
-			var moveSpeed = keys.SPRINT ? 1500 : 250;
+			var moveSpeed = keys.SPRINT ? 500 : 100;
 			var cosAngle = Math.cos(this.cameraHorizontalAngle);
 			var sinAngle = Math.sin(this.cameraHorizontalAngle);
 			if(keys.UP !== keys.DOWN) {

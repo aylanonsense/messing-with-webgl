@@ -1,6 +1,6 @@
 define([
 	'shared/block/blockTypes',
-	'display/textureConfig',
+	'shared/display/textureConfig',
 	'display/createTextureCoordinates'
 ], function(
 	blockTypes,

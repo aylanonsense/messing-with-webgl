@@ -5,5 +5,8 @@
     "gl-matrix": "^2.3.2",
     "noisejs": "git+https://github.com/xixixao/noisejs.git",
     "requirejs": "^2.2.0"
+  },
+  "devDependencies": {
+    "canvas": "^1.3.12"
   }
 }
