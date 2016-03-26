@@ -37,3 +37,4 @@ node_modules
 
 # generated files
 /img/generated/*.png
+/data/terrain/*
