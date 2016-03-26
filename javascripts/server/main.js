@@ -1,16 +1,21 @@
 define([
-	'terrain/generateTerrain',
-	'terrain/saveTerrain',
+	'terrain/generateChunk',
+	'terrain/saveChunks',
 	'image/generateImages'
 ], function(
-	generateTerrain,
-	saveTerrain,
+	generateChunk,
+	saveChunks,
 	generateImages
 ) {
 	return function main() {
+		var seed = 0.63478145;
 		//generate terrain
-		var terrain = generateTerrain({ seed: 0.63478145, width: 32, height: 16, depth: 32 });
-		saveTerrain('test-level', terrain);
+		saveChunks('test-level', [
+			generateChunk(0, 0, 0, seed),
+			generateChunk(1, 0, 0, seed),
+			generateChunk(0, 0, 1, seed),
+			generateChunk(1, 0, 1, seed)
+		]);
 
 		//generate images
 		generateImages();

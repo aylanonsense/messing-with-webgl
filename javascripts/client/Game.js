@@ -5,10 +5,11 @@ define([
 	'shared/display/textureConfig',
 	'display/loadTexture',
 	'gl-matrix',
+	'voxel/ChunkManager',
 	'voxel/Chunk',
 	'input/mouse',
 	'input/keyboard',
-	'terrain/loadTerrain'
+	'terrain/loadChunks'
 ], function(
 	config,
 	global,
@@ -16,15 +17,16 @@ define([
 	textureConfig,
 	loadTexture,
 	glMatrix,
+	ChunkManager,
 	Chunk,
 	mouse,
 	keyboard,
-	loadTerrain
+	loadChunks
 ) {
 	function Game(gl, program) {
 		var buffer;
 
-		this.chunks = [];
+		this.chunkManager = new ChunkManager();
 		this.numTriangles = 0;
 
 		//configure WebGL
@@ -106,43 +108,13 @@ define([
 		this.rebuildGeometry(gl, program);
 
 		//load terrain
-		loadTerrain('test-level', function(terrain) {
-			this.applyTerrain(terrain);
+		loadChunks('test-level', function(chunks) {
+			for(var i = 0; i < chunks.length; i++) {
+				this.chunkManager.addChunk(chunks[i].x, chunks[i].y, chunks[i].z, chunks[i].blockTypes);
+			}
 			this.rebuildGeometry(gl, program);
 		}, this);
 	}
-	Game.prototype.applyTerrain = function(terrain) {
-		this.chunks = [];
-		for(var chunkX = 0; chunkX < terrain.width; chunkX += config.CHUNK_WIDTH) {
-			for(var chunkY = 0; chunkY < terrain.height; chunkY += config.CHUNK_HEIGHT) {
-				for(var chunkZ = 0; chunkZ < terrain.depth; chunkZ += config.CHUNK_DEPTH) {
-					//collect the blockData for this chunk
-					var blockData = [];
-					for(var x = 0; x < config.CHUNK_WIDTH; x++) {
-						for(var y = 0; y < config.CHUNK_HEIGHT; y++) {
-							for(var z = 0; z < config.CHUNK_DEPTH; z ++) {
-								if(chunkX + x < terrain.width && chunkY + y < terrain.height && chunkZ + z < terrain.depth) {
-									//figure out if there is even a block in that position
-									var i = (chunkX + x) + terrain.width * (chunkY + y) +
-										terrain.width * terrain.height * (chunkZ + z);
-									blockData.push(terrain.blocks[i]);
-								}
-								else {
-									blockData.push(0);
-								}
-							}
-						}
-					}
-					this.chunks.push(new Chunk({
-						blockData: blockData,
-						x: chunkX * config.BLOCK_SIZE,
-						y: chunkY * config.BLOCK_SIZE,
-						z: chunkZ * config.BLOCK_SIZE
-					}));
-				}
-			}
-		}
-	};
 	Game.prototype.rebuildGeometry = function(gl, program) {
 		//compile vertices and texture coordinates
 		var vertices = [];
@@ -150,12 +122,12 @@ define([
 		var textureCoordinates = [];
 		var textureSizes = [];
 		var textureOffsets = [];
-		for(var i = 0; i < this.chunks.length; i++) {
-			vertices = vertices.concat(this.chunks[i].vertices);
-			normals = normals.concat(this.chunks[i].normals);
-			textureCoordinates = textureCoordinates.concat(this.chunks[i].textureCoordinates);
-			textureSizes = textureSizes.concat(this.chunks[i].textureSizes);
-			textureOffsets = textureOffsets.concat(this.chunks[i].textureOffsets);
+		for(var i = 0; i < this.chunkManager.chunks.length; i++) {
+			vertices = vertices.concat(this.chunkManager.chunks[i].vertices);
+			normals = normals.concat(this.chunkManager.chunks[i].normals);
+			textureCoordinates = textureCoordinates.concat(this.chunkManager.chunks[i].textureCoordinates);
+			textureSizes = textureSizes.concat(this.chunkManager.chunks[i].textureSizes);
+			textureOffsets = textureOffsets.concat(this.chunkManager.chunks[i].textureOffsets);
 		}
 		this.numTriangles = vertices.length / 3;
 

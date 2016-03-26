@@ -37,7 +37,7 @@ define([
 
 	function Chunk(params) {
 		//variables solely to make initialization easier
-		this.blockData = params.blockData;
+		this.blockTypes = params.blockTypes;
 		this.x = params.x || 0;
 		this.y = params.y || 0;
 		this.z = params.z || 0;
@@ -64,15 +64,15 @@ define([
 			for(var y = 0; y < config.CHUNK_HEIGHT; y++) {
 				for(var z = 0; z < config.CHUNK_DEPTH; z++) {
 					var i = x * config.CHUNK_HEIGHT * config.CHUNK_DEPTH + y * config.CHUNK_DEPTH + z;
-					if(blockTypesEnum[this.blockData[i]]) {
-						var blockType = blockTypesEnum[this.blockData[i]];
+					if(blockTypesEnum[this.blockTypes[i]]) {
+						var blockType = blockTypesEnum[this.blockTypes[i]];
 						var texture = efficientBlockTypes[blockType].texture;
 
 						//create vertices for each block
 						this.vertices.push.apply(this.vertices, createCubeGeometry(
-							this.x + x * config.BLOCK_SIZE,
-							this.y + y * config.BLOCK_SIZE,
-							this.z + z * config.BLOCK_SIZE,
+							this.x * config.CHUNK_WIDTH * config.BLOCK_SIZE + x * config.BLOCK_SIZE,
+							this.y * config.CHUNK_HEIGHT * config.BLOCK_SIZE + y * config.BLOCK_SIZE,
+							this.z * config.CHUNK_DEPTH * config.BLOCK_SIZE + z * config.BLOCK_SIZE,
 							config.BLOCK_SIZE, config.BLOCK_SIZE, config.BLOCK_SIZE));
 
 						//add normal vectors for each triangle
