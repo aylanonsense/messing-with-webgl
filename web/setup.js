@@ -4,11 +4,15 @@ requirejs.config({
 	paths: {
 		'shared': '../shared',
 		'gl-matrix': '/lib/gl-matrix',
-		'noisejs': '/lib/noisejs'
+		'noisejs': '/lib/noisejs',
+		'socket.io': '../../socket.io/socket.io'
 	},
 	shim: {
 		'noisejs': {
 			exports: 'Noise'
+		},
+		'socket.io': {
+			exports: 'io'
 		}
 	}
 });

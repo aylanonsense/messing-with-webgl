@@ -6,17 +6,15 @@ define([
 	noisejs
 ) {
 	function generateBlock(x, y, z, noise) {
-		var v = noise.perlin3(x / 10, y / 10, z / 10);
-		if(v > 0.1) {
-			if(v > 0.3) {
-				return 3; //stone
-			}
-			else {
-				return 2; //grass
-			}
+		var h = 5 * noise.perlin3(x / 15, 0, z / 15) + 7;
+		if(h > 3 + y) {
+			return 3; //stone
+		}
+		else if(h > y) {
+			return 2; //grass
 		}
 		else {
-			return 0; //air
+			return null;
 		}
 	}
 

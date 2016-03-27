@@ -5,10 +5,9 @@ define([
 	'shared/display/textureConfig',
 	'display/loadTexture',
 	'gl-matrix',
+	'entity/Player',
 	'voxel/ChunkManager',
 	'voxel/Chunk',
-	'input/mouse',
-	'input/keyboard',
 	'terrain/loadChunks'
 ], function(
 	config,
@@ -17,16 +16,18 @@ define([
 	textureConfig,
 	loadTexture,
 	glMatrix,
+	Player,
 	ChunkManager,
 	Chunk,
-	mouse,
-	keyboard,
 	loadChunks
 ) {
 	function Game(gl, program) {
 		var buffer;
 
 		this.chunkManager = new ChunkManager();
+		this.player = new Player({ x: 0, y: config.CHUNK_HEIGHT * config.BLOCK_SIZE, z: 0,
+			horizontalDir: 0, verticalDir: 0 });
+		this.entities = [ this.player ];
 		this.numTriangles = 0;
 
 		//configure WebGL
@@ -81,30 +82,11 @@ define([
 		var blockTexture = loadTexture(gl, textureConfig.blocks);
 		gl.bindTexture(gl.TEXTURE_2D, blockTexture);
 
-		//set up camera
-		this.cameraPosition = [
-			2.1 * config.CHUNK_WIDTH * config.BLOCK_SIZE,
-			1.05 * config.CHUNK_HEIGHT * config.BLOCK_SIZE,
-			2.1 * config.CHUNK_DEPTH * config.BLOCK_SIZE
-		];
-		this.cameraHorizontalAngle = Math.PI * -3 / 4;
-		this.cameraVerticalAngle = Math.PI / 8;
-		mouse.onMouseEvent(function(type, x, y, dx, dy) {
-			if(type === 'mousedown') {
-				mouse.toggleLock();
-			}
-			if(mouse.isLocked()) {
-				this.cameraVerticalAngle = Math.min(Math.max(-Math.PI / 2 + 0.05,
-					this.cameraVerticalAngle + dy / 200), Math.PI / 2 - 0.05);
-				this.cameraHorizontalAngle -= dx / 150;
-			}
-		}, this);
-
 		//projection matrix
 		this.projectionMatrix = null;
 		this.recalculateProjectionMatrix();
 
-		//rebuild geometry (even though there is none)
+		//rebuild geometry (even though there is none until the terrain loads)
 		this.rebuildGeometry(gl, program);
 
 		//load terrain
@@ -148,22 +130,8 @@ define([
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureOffsets), gl.STATIC_DRAW);
 	};
 	Game.prototype.update = function(t) {
-		if(mouse.isLocked()) {
-			var keys = keyboard.getState();
-			var moveSpeed = keys.SPRINT ? 500 : 100;
-			var cosAngle = Math.cos(this.cameraHorizontalAngle);
-			var sinAngle = Math.sin(this.cameraHorizontalAngle);
-			if(keys.UP !== keys.DOWN) {
-				this.cameraPosition[0] += sinAngle * moveSpeed * t * (keys.UP ? 1 : -1);
-				this.cameraPosition[2] += cosAngle * moveSpeed * t * (keys.UP ? 1 : -1);
-			}
-			if(keys.LEFT !== keys.RIGHT) {
-				this.cameraPosition[0] += cosAngle * moveSpeed * t * (keys.LEFT ? 1 : -1);
-				this.cameraPosition[2] -= sinAngle * moveSpeed * t * (keys.LEFT ? 1 : -1);
-			}
-			if(keys.JUMP !== keys.CROUCH) {
-				this.cameraPosition[1] += moveSpeed * t * (keys.JUMP ? 1 : -1);
-			}
+		for(var i = 0; i < this.entities.length; i++) {
+			this.entities[i].update(t);
 		}
 	};
 	Game.prototype.recalculateProjectionMatrix = function() {
@@ -177,13 +145,13 @@ define([
 		//calculate the focal point
 		var focalPoint = [ 0, 0, 1 ];
 		var cameraRotation = glMatrix.mat4.identity([]);
-		glMatrix.mat4.rotateY(cameraRotation, cameraRotation, this.cameraHorizontalAngle);
-		glMatrix.mat4.rotateX(cameraRotation, cameraRotation, this.cameraVerticalAngle);
+		glMatrix.mat4.rotateY(cameraRotation, cameraRotation, this.player.horizontalDir);
+		glMatrix.mat4.rotateX(cameraRotation, cameraRotation, this.player.verticalDir);
 		glMatrix.vec3.transformMat4(focalPoint, focalPoint, cameraRotation);
-		glMatrix.vec3.add(focalPoint, focalPoint, this.cameraPosition);
+		glMatrix.vec3.add(focalPoint, focalPoint, this.player.pos);
 
 		//calculate the view matrix
-		var viewMatrix = glMatrix.mat4.lookAt([], this.cameraPosition, focalPoint, [ 0, 1, 0 ]);
+		var viewMatrix = glMatrix.mat4.lookAt([], this.player.pos, focalPoint, [ 0, 1, 0 ]);
 		glMatrix.mat4.multiply(viewMatrix, this.projectionMatrix, viewMatrix);
 
 		//set the view matrix and draw the geometry

@@ -2,14 +2,28 @@ define([
 	'global',
 	'display/canvas',
 	'Game',
+	'socket.io',
 	'webgl/createProgramFromFiles'
 ], function(
 	global,
 	canvas,
 	Game,
+	createSocket,
 	createProgramFromFiles
 ) {
 	return function main() {
+		//set up socket io
+		var socket = createSocket();
+		socket.on('connect', function() {
+			console.log('connect');
+		});
+		socket.on('message', function(msg) {
+			console.log('message', msg);
+		});
+		socket.on('disconnect', function(){
+			console.log('disconnect');
+		});
+
 		//get A WebGL context
 		var gl = canvas.getContext('experimental-webgl');
 		if(!gl) {

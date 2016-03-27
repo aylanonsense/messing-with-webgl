@@ -9,7 +9,7 @@ requirejs.config({
 });
 require = requirejs;
 
-//run server
+//create web server
 var express = require('express');
 var app = express();
 app.use(express.static(__dirname + '/web'));
@@ -27,7 +27,7 @@ app.get('/lib/require.js', function(req, res) {
 app.get('/lib/gl-matrix.js', function(req, res) {
 	res.sendFile(__dirname + '/node_modules/gl-matrix/dist/gl-matrix-min.js');
 });
-app.listen(process.env.PORT || 3000);
+var server = app.listen(process.env.PORT || 3000);
 
 //start server application
-require('main')();
+require('main')(server);
