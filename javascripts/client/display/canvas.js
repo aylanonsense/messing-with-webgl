@@ -1,9 +1,3 @@
-define([
-	'util/EventHelper',
-	'display/canvas'
-], function(
-	EventHelper,
-	canvas
-) {
+define(function() {
 	return document.getElementById('canvas');
 });

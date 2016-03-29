@@ -1,6 +1,6 @@
 define([
 	'global',
-	'util/EventHelper'
+	'shared/util/EventHelper'
 ], function(
 	global,
 	EventHelper

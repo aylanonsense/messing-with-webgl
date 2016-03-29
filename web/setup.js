@@ -5,7 +5,8 @@ requirejs.config({
 		'shared': '../shared',
 		'gl-matrix': '/lib/gl-matrix',
 		'noisejs': '/lib/noisejs',
-		'socket.io': '../../socket.io/socket.io'
+		'socket.io': '../../socket.io/socket.io',
+		'cookies-js': '/lib/cookies-js'
 	},
 	shim: {
 		'noisejs': {

@@ -1,5 +1,5 @@
 define([
-	'util/EventHelper',
+	'shared/util/EventHelper',
 	'display/canvas'
 ], function(
 	EventHelper,

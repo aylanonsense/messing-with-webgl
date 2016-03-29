@@ -1,6 +1,7 @@
 {
   "version": "0.0.0",
   "dependencies": {
+    "cookies-js": "^1.2.2",
     "express": "^4.13.4",
     "gl-matrix": "^2.3.2",
     "noisejs": "git+https://github.com/xixixao/noisejs.git",

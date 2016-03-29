@@ -2,27 +2,30 @@ define([
 	'global',
 	'display/canvas',
 	'Game',
-	'socket.io',
+	'shared/util/now',
+	'net/Connection',
 	'webgl/createProgramFromFiles'
 ], function(
 	global,
 	canvas,
 	Game,
-	createSocket,
+	now,
+	Connection,
 	createProgramFromFiles
 ) {
 	return function main() {
 		//set up socket io
-		var socket = createSocket();
-		socket.on('connect', function() {
+		var conn = new Connection();
+		conn.on('connect', function() {
 			console.log('connect');
 		});
-		socket.on('message', function(msg) {
-			console.log('message', msg);
+		conn.on('receive', function(msg) {
+			console.log('receive', msg);
 		});
-		socket.on('disconnect', function(){
+		conn.on('disconnect', function(){
 			console.log('disconnect');
 		});
+		conn.connect();
 
 		//get A WebGL context
 		var gl = canvas.getContext('experimental-webgl');
@@ -42,16 +45,16 @@ define([
 			var game = new Game(gl, program);
 
 			//kick off the game loop
-			var then = null;
-			function loop(now) {
-				now /= 1000;
+			var prevTime = null;
+			function loop() {
+				var currTime = now();
 
 				//update the game
-				if(then) {
-					var t = now - then;
+				if(prevTime) {
+					var t = currTime - prevTime;
 					game.update(t);
 				}
-				then = now;
+				prevTime = currTime;
 
 				//resize the canvas if needed
 				if(windowHasBeenResized) {
