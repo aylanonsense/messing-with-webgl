@@ -1,11 +1,13 @@
 define([
 	'socket.io',
+	'config',
 	'net/generateFakeLag',
 	'shared/util/DelayQueue',
 	'shared/util/EventHelper',
 	'shared/util/now'
 ], function(
 	createSocket,
+	clientConfig,
 	generateFakeLag,
 	DelayQueue,
 	EventHelper,
@@ -22,26 +24,30 @@ define([
 
 		//set up message queues (allows us to add fake lag)
 		this._inbound = new DelayQueue();
-		this._inbound.on('dequeue', function(evt) {
-			if(evt.type === 'message' && self._isConnected) {
-				self._events.trigger('receive', evt);
+		this._inbound.on('dequeue', function(msg) {
+			if(msg.type === 'message' && self._isConnected) {
+				if(clientConfig.LOG_NETWORK_TRAFFIC) { console.log('received:', msg.msg); }
+				self._events.trigger('receive', msg.msg);
 			}
-			else if(evt.type === 'connect') {
+			else if(msg.type === 'connect') {
 				self._isConnected = true;
 				self._isConnecting = false;
+				if(clientConfig.LOG_NETWORK_TRAFFIC) { console.log('connected'); }
 				self._events.trigger('connect', self._hasConnectedBefore); //isReconnect
 				self._hasConnectedBefore = true;
 			}
-			else if(evt.type === 'disconnect') {
+			else if(msg.type === 'disconnect') {
 				self._isConnected = false;
 				self._isConnecting = false;
 				self._outbound.empty();
+				if(clientConfig.LOG_NETWORK_TRAFFIC) { console.log('disconnected'); }
 				self._events.trigger('disconnect');
 			}
 		});
 		this._outbound = new DelayQueue();
 		this._outbound.on('dequeue', function(evt) {
 			if(evt.type === 'message' && self._isConnected && self._isActuallyConnected) {
+				if(clientConfig.LOG_NETWORK_TRAFFIC) { console.log('sent:', evt.msg); }
 				self._socket.emit('message', evt.msg);
 			}
 			else if(evt.type === 'connect') {

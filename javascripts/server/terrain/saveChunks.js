@@ -1,9 +1,7 @@
 define([
-	'fs',
-	'shared/config'
+	'fs'
 ], function(
-	fs,
-	config
+	fs
 ) {
 	return function saveChunks(fileName, chunks, callback) {
 		var filePath = './data/terrain/' + fileName + '.json';

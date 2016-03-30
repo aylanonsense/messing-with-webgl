@@ -1,6 +1,5 @@
 define([
 	'shared/config',
-	'global',
 	'display/canvas',
 	'shared/display/textureConfig',
 	'display/loadTexture',
@@ -10,8 +9,7 @@ define([
 	'voxel/Chunk',
 	'terrain/loadChunks'
 ], function(
-	config,
-	global,
+	sharedConfig,
 	canvas,
 	textureConfig,
 	loadTexture,
@@ -25,7 +23,7 @@ define([
 		var buffer;
 
 		this.chunkManager = new ChunkManager();
-		this.player = new Player({ x: 0, y: config.CHUNK_HEIGHT * config.BLOCK_SIZE, z: 0,
+		this.player = new Player({ x: 0, y: sharedConfig.CHUNK_HEIGHT * sharedConfig.BLOCK_SIZE, z: 0,
 			horizontalDir: 0, verticalDir: 0 });
 		this.entities = [ this.player ];
 		this.numTriangles = 0;

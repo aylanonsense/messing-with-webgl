@@ -1,24 +1,24 @@
 define([
-	'global',
+	'config',
 	'shared/util/EventHelper'
 ], function(
-	global,
+	clientConfig,
 	EventHelper
 ) {
 	var events = new EventHelper([ 'key-event' ]);
 	var keyboardState = {};
-	for(var key in global.KEY_BINDINGS) {
-		keyboardState[global.KEY_BINDINGS[key]] = false;
+	for(var key in clientConfig.KEY_BINDINGS) {
+		keyboardState[clientConfig.KEY_BINDINGS[key]] = false;
 	}
 
 	//add keyboard handler
 	function onKeyboardEvent(evt) {
 		var isDown = (evt.type === 'keydown');
-		if(global.KEY_BINDINGS[evt.which]) {
+		if(clientConfig.KEY_BINDINGS[evt.which]) {
 			evt.preventDefault();
-			if(keyboardState[global.KEY_BINDINGS[evt.which]] !== isDown) {
-				keyboardState[global.KEY_BINDINGS[evt.which]] = isDown;
-				events.trigger('key-event', global.KEY_BINDINGS[evt.which], isDown, keyboardState);
+			if(keyboardState[clientConfig.KEY_BINDINGS[evt.which]] !== isDown) {
+				keyboardState[clientConfig.KEY_BINDINGS[evt.which]] = isDown;
+				events.trigger('key-event', clientConfig.KEY_BINDINGS[evt.which], isDown, keyboardState);
 			}
 		}
 	}

@@ -1,30 +1,20 @@
 define([
-	'global',
+	'config',
 	'display/canvas',
 	'Game',
 	'shared/util/now',
-	'net/Connection',
+	'net/conn',
 	'webgl/createProgramFromFiles'
 ], function(
-	global,
+	clientConfig,
 	canvas,
 	Game,
 	now,
-	Connection,
+	conn,
 	createProgramFromFiles
 ) {
 	return function main() {
 		//set up socket io
-		var conn = new Connection();
-		conn.on('connect', function() {
-			console.log('connect');
-		});
-		conn.on('receive', function(msg) {
-			console.log('receive', msg);
-		});
-		conn.on('disconnect', function(){
-			console.log('disconnect');
-		});
 		conn.connect();
 
 		//get A WebGL context
@@ -59,10 +49,10 @@ define([
 				//resize the canvas if needed
 				if(windowHasBeenResized) {
 					windowHasBeenResized = false;
-					var size = Math.min(window.innerWidth / global.CANVAS_WIDTH,
-						window.innerHeight / global.CANVAS_HEIGHT);
-					canvas.width = size * global.CANVAS_WIDTH;
-					canvas.height = size * global.CANVAS_HEIGHT;
+					var size = Math.min(window.innerWidth / clientConfig.CANVAS_WIDTH,
+						window.innerHeight / clientConfig.CANVAS_HEIGHT);
+					canvas.width = size * clientConfig.CANVAS_WIDTH;
+					canvas.height = size * clientConfig.CANVAS_HEIGHT;
 					gl.viewport(0, 0, canvas.width, canvas.height);
 					game.recalculateProjectionMatrix();
 				}

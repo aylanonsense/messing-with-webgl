@@ -4,7 +4,7 @@ define([
 	'shared/block/blockTypesEnum',
 	'block/efficientBlockTypes'
 ], function(
-	config,
+	sharedConfig,
 	createCubeGeometry,
 	blockTypesEnum,
 	efficientBlockTypes
@@ -41,9 +41,9 @@ define([
 		this.x = params.x || 0;
 		this.y = params.y || 0;
 		this.z = params.z || 0;
-		this.width = config.CHUNK_WIDTH * config.BLOCK_SIZE;
-		this.height = config.CHUNK_HEIGHT * config.BLOCK_SIZE;
-		this.depth = config.CHUNK_DEPTH * config.BLOCK_SIZE;
+		this.width = sharedConfig.CHUNK_WIDTH * sharedConfig.BLOCK_SIZE;
+		this.height = sharedConfig.CHUNK_HEIGHT * sharedConfig.BLOCK_SIZE;
+		this.depth = sharedConfig.CHUNK_DEPTH * sharedConfig.BLOCK_SIZE;
 
 		//initialize geometry
 		this.vertices = [];
@@ -60,20 +60,20 @@ define([
 		this.textureCoordinates = geom.textureCoordinates;
 	};*/
 	Chunk.prototype._createSimpleBlockGeometry = function() {
-		for(var x = 0; x < config.CHUNK_WIDTH; x++) {
-			for(var y = 0; y < config.CHUNK_HEIGHT; y++) {
-				for(var z = 0; z < config.CHUNK_DEPTH; z++) {
-					var i = x * config.CHUNK_HEIGHT * config.CHUNK_DEPTH + y * config.CHUNK_DEPTH + z;
+		for(var x = 0; x < sharedConfig.CHUNK_WIDTH; x++) {
+			for(var y = 0; y < sharedConfig.CHUNK_HEIGHT; y++) {
+				for(var z = 0; z < sharedConfig.CHUNK_DEPTH; z++) {
+					var i = x * sharedConfig.CHUNK_HEIGHT * sharedConfig.CHUNK_DEPTH + y * sharedConfig.CHUNK_DEPTH + z;
 					if(blockTypesEnum[this.blockTypes[i]]) {
 						var blockType = blockTypesEnum[this.blockTypes[i]];
 						var texture = efficientBlockTypes[blockType].texture;
 
 						//create vertices for each block
 						this.vertices.push.apply(this.vertices, createCubeGeometry(
-							this.x * config.CHUNK_WIDTH * config.BLOCK_SIZE + x * config.BLOCK_SIZE,
-							this.y * config.CHUNK_HEIGHT * config.BLOCK_SIZE + y * config.BLOCK_SIZE,
-							this.z * config.CHUNK_DEPTH * config.BLOCK_SIZE + z * config.BLOCK_SIZE,
-							config.BLOCK_SIZE, config.BLOCK_SIZE, config.BLOCK_SIZE));
+							this.x * sharedConfig.CHUNK_WIDTH * sharedConfig.BLOCK_SIZE + x * sharedConfig.BLOCK_SIZE,
+							this.y * sharedConfig.CHUNK_HEIGHT * sharedConfig.BLOCK_SIZE + y * sharedConfig.BLOCK_SIZE,
+							this.z * sharedConfig.CHUNK_DEPTH * sharedConfig.BLOCK_SIZE + z * sharedConfig.BLOCK_SIZE,
+							sharedConfig.BLOCK_SIZE, sharedConfig.BLOCK_SIZE, sharedConfig.BLOCK_SIZE));
 
 						//add normal vectors for each triangle
 						this.normals.push.apply(this.normals, BLOCK_NORMALS);

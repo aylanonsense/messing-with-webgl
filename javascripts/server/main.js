@@ -1,21 +1,17 @@
 define([
-	'net/ConnectionServer',
 	'terrain/generateChunk',
 	'terrain/saveChunks',
-	'image/generateImages'
+	'image/generateImages',
+	'net/server'
 ], function(
-	ConnectionServer,
 	generateChunk,
 	saveChunks,
-	generateImages
+	generateImages,
+	server
 ) {
-	return function main(socketServer) {
+	return function main(expressServer) {
 		//create socket server
-		var server = new ConnectionServer(socketServer);
-		server.on('connect', function(conn) {
-			console.log("Connection!");
-		});
-		// var socketServer = createSocketServer(server);
+		server.startListening(expressServer);
 
 		//generate terrain
 		var seed = 0.782910;

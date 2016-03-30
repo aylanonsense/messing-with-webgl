@@ -13,5 +13,8 @@ define({
 		17: 'CROUCH',				//ctrl key
 		16: 'SPRINT',				//shift key
 		27: 'MENU'					//escape key
-	}
+	},
+
+	//network
+	LOG_NETWORK_TRAFFIC: false
 });

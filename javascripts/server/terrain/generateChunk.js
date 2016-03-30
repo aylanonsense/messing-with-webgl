@@ -2,7 +2,7 @@ define([
 	'shared/config',
 	'noisejs'
 ], function(
-	config,
+	sharedConfig,
 	noisejs
 ) {
 	function generateBlock(x, y, z, noise) {
@@ -21,13 +21,13 @@ define([
 	return function generateChunk(chunkX, chunkY, chunkZ, seed) {
 		var noise = new noisejs(seed);
 		var blockTypes = [];
-		for(var x = 0; x < config.CHUNK_WIDTH; x++) {
-			for(var y = 0; y < config.CHUNK_HEIGHT; y++) {
-				for(var z = 0; z < config.CHUNK_DEPTH; z++) {
+		for(var x = 0; x < sharedConfig.CHUNK_WIDTH; x++) {
+			for(var y = 0; y < sharedConfig.CHUNK_HEIGHT; y++) {
+				for(var z = 0; z < sharedConfig.CHUNK_DEPTH; z++) {
 					blockTypes.push(generateBlock(
-						chunkX * config.CHUNK_WIDTH + x,
-						chunkY * config.CHUNK_HEIGHT + y,
-						chunkZ * config.CHUNK_DEPTH + z, noise));
+						chunkX * sharedConfig.CHUNK_WIDTH + x,
+						chunkY * sharedConfig.CHUNK_HEIGHT + y,
+						chunkZ * sharedConfig.CHUNK_DEPTH + z, noise));
 				}
 			}
 		}

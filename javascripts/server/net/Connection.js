@@ -1,6 +1,8 @@
 define([
+	'config',
 	'shared/util/EventHelper'
 ], function(
+	serverConfig,
 	EventHelper
 ) {
 	var nextConnId = 0;
@@ -13,15 +15,19 @@ define([
 		//handle the socket
 		this._socket = socket;
 		this._isConnected = true;
+		if(serverConfig.LOG_NETWORK_TRAFFIC) { console.log('[' + this._connId + '] connected'); }
 		this._socket.on('message', function(msg) {
+			if(serverConfig.LOG_NETWORK_TRAFFIC) { console.log('[' + self._connId + '] received:', msg); }
 			self._events.trigger('receive', msg);
 		});
 		this._socket.on('disconnect', function() {
 			self._isConnected = false;
+			if(serverConfig.LOG_NETWORK_TRAFFIC) { console.log('[' + self._connId + '] disconnected'); }
 			self._events.trigger('disconnect');
 		});
 	}
 	Connection.prototype.send = function(msg) {
+		if(serverConfig.LOG_NETWORK_TRAFFIC) { console.log('[' + this._connId + '] sent:', msg); }
 		this._socket.emit('message', msg);
 	};
 	Connection.prototype.isConnected = function() {
