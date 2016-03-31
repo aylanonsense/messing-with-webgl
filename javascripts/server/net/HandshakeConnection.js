@@ -46,12 +46,12 @@ define([
 			this.flush();
 		}
 	};
-	HandshakeConnection.prototype.acceptHandshake = function(connectParams) {
+	HandshakeConnection.prototype.acceptHandshake = function(session) {
 		if(this._conn.isConnected()) {
 			this._hasAcceptedHandshake = true;
 			this._bufferedMessages.push({
 				type: 'handshake-accept',
-				connectParams: connectParams
+				session: session
 			});
 			this.flush();
 		}

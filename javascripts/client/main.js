@@ -14,9 +14,6 @@ define([
 	createProgramFromFiles
 ) {
 	return function main() {
-		//set up socket io
-		conn.connect();
-
 		//get A WebGL context
 		var gl = canvas.getContext('experimental-webgl');
 		if(!gl) {
@@ -32,6 +29,7 @@ define([
 		//setup a GLSL program
 		program = createProgramFromFiles(gl, '3d-texture', '3d-texture-4tap', function(program) {
 			//create a new game
+			var isPaused = true;
 			var game = new Game(gl, program);
 
 			//kick off the game loop
@@ -40,7 +38,7 @@ define([
 				var currTime = now();
 
 				//update the game
-				if(prevTime) {
+				if(prevTime && !isPaused) {
 					var t = currTime - prevTime;
 					game.update(t);
 				}
@@ -64,6 +62,20 @@ define([
 				requestAnimationFrame(loop);
 			}
 			requestAnimationFrame(loop);
+
+			//reset the game whenever we connect to the server
+			conn.on('handshake', function(session) {
+				isPaused = false;
+				game.reset(session);
+			});
+
+			//pause the game whenever we are disconnected from the server;
+			conn.on('disconnect', function() {
+				isPaused = true;
+			});
+
+			//connect to the server!
+			conn.connect();
 		});
 	};
 });

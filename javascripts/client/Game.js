@@ -95,6 +95,11 @@ define([
 			this.rebuildGeometry(gl, program);
 		}, this);
 	}
+	Game.prototype.reset = function(session) {
+		this.player.pos[0] = session.pos[0];
+		this.player.pos[1] = session.pos[1];
+		this.player.pos[2] = session.pos[2];
+	};
 	Game.prototype.rebuildGeometry = function(gl, program) {
 		//compile vertices and texture coordinates
 		var vertices = [];

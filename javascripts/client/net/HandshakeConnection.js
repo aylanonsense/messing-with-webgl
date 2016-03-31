@@ -38,11 +38,11 @@ define([
 				var msg = messages[i];
 				if(msg.type === 'handshake-accept' && this._isAwaitingHandshake) {
 					//handshake accepted!
-					this._sessionId = msg.connectParams.sessionId;
+					this._sessionId = msg.session.sessionId;
 					Cookies.set(SESSION_COOKIE_KEY, this._sessionId);
 					this._hasHandshaked = true;
 					this._isAwaitingHandshake = false;
-					this._events.trigger('handshake', msg.connectParams);
+					this._events.trigger('handshake', msg.session);
 				}
 				else if(msg.type === 'message' && this.isConnected()) {
 					this._events.trigger('receive', msg.msg);
