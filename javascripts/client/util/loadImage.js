@@ -25,7 +25,7 @@ define(function() {
 
 	function loadIndividualImage(imagePath, callback) {
 		var image = new Image();
-		image.src = imagePath;
+		image.src = BASE_URL + imagePath;
 		image.addEventListener('load', function() {
 			callback(image);
 		});

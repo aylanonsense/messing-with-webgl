@@ -36,7 +36,7 @@ define(function() {
 				callback(xhr.responseText);
 			}
 		}
-		xhr.open('get', filePath, !!callback);
+		xhr.open('get', BASE_URL + filePath, !!callback);
 		if(callback) {
 			xhr.onreadystatechange = onreadystatechange;
 		}
