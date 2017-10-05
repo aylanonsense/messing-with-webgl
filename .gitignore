@@ -34,7 +34,3 @@ node_modules
 
 # OSX files
 .DS_Store
-
-# generated files
-/img/generated/*.png
-/data/terrain/*

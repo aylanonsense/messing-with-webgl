@@ -30,4 +30,4 @@ app.get('/lib/gl-matrix.js', function(req, res) {
 app.listen(process.env.PORT || 3000);
 
 //start server application
-require('main')();
+// require('main')();
